@@ -74,6 +74,7 @@ function showStopButton() {
     const icon = gameBtn.querySelector('.fa-solid');
     icon.classList.add('fa-stop');
     icon.classList.remove('fa-play');
+    gameBtn.style.visibility = 'visible';
 }
 
 function hideGameButton() {
@@ -142,12 +143,10 @@ function onFiledClick(event) {
         playScound(carrotSound);
         updateScoreBoare();
         if (score === CARROT_COUNT) {
-
             finishGame(true);
         }
     } else if (target.matches('.bug')) {
         //벌레!!
-
         finishGame(false);
     }
 }
