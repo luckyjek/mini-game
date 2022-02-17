@@ -3,6 +3,7 @@
 const CARROT_SIZE = 80;
 const CARROT_COUNT = 5;
 const BUG_COUNT = 5;
+const GAME_DURATION_SEC = 5;
 
 const field = document.querySelector('.game__field');
 const fieldRect = field.getBoundingClientRect();
@@ -47,6 +48,27 @@ function showStopButton() {
 function showTimerAndScore() {
     gameTimer.style.visibility = 'visible';
     gameScore.style.visibility = 'visible';
+}
+
+function startGameTimer() {
+    let remainingTimerSec = GAME_DURATION_SEC;
+    updateTimerText(remainingTimerSec);
+    timer = setInterval(() => {
+        //interval이 1초마다 불려질때, 만약 남아있는 시간이 0초보다 작거나 같다면 
+        //더이상 인터벌을 만들면안된다.
+        if (remainingTimerSec <= 0) {
+            clearInterval(timer); //web AIP를 이용해서 clearInterval()호출
+            return;
+        }
+        //만약 0초가 아닌, 아직 게임이 진행이되고있다면 
+        updateTimerText(--remainingTimerSec);
+    }, 1000)
+}
+
+function updateTimerText(time) {
+    const minutes = Math.floor(time / 60) //floor은 소수점을 내려주는 integer로 만들어주는 함수
+    const secounds = time % 60;
+    gameTimer.innerHTML = `${minutes}:${secounds}`
 }
 
 function initGame() {
