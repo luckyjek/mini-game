@@ -1,5 +1,5 @@
 'use strict';
-
+import PopUp from './popup.js';
 const CARROT_SIZE = 80;
 const CARROT_COUNT = 5;
 const BUG_COUNT = 5;
@@ -11,10 +11,6 @@ const gameBtn = document.querySelector('.game__button');
 const gameTimer = document.querySelector('.game__timer');
 const gameScore = document.querySelector('.game__score');
 
-const popUp = document.querySelector('.pop-up');
-const popUpText = document.querySelector('.pop-up__message');
-const popUpRefresh = document.querySelector('.pop-up__refresh');
-
 const carrotSound = new Audio('./sound/carrot_pull.mp3');
 const alertSound = new Audio('./sound/alert.mp3');
 const bgSound = new Audio('./sound/bg.mp3');
@@ -24,6 +20,12 @@ let started = false;
 let score = 0;
 let timer = undefined;
 
+const gameFinishBanner = new PopUp();
+//gameFinishBanner를 사용해서 setClickListner를 등록할건데,
+//click이되면, 내가 등록한 함수를 부른다.
+gameFinishBanner.setClickListner(() => {
+    startGame();
+})
 field.addEventListener('click', onFiledClick); //=== field.addEventListener('click', (event)=>onFiledClick(event));
 gameBtn.addEventListener('click', () => {
     //클릭이되는순간 started는 false로 들어와 그래서 바로 else로 가! -> tartGame()호출
@@ -32,10 +34,6 @@ gameBtn.addEventListener('click', () => {
     } else { //게임이 시작이되지않았다면, 게임을 시작하면된다.
         startGame();
     }
-})
-popUpRefresh.addEventListener('click', () => {
-    startGame();
-    hidePopUp();
 })
 
 function startGame() {
@@ -51,7 +49,7 @@ function stopGame() {
     started = false;
     stopGameTimer();
     hideGameButton();
-    showPopUpWithText('RERLAY❓');
+    gameFinishBanner.showWithText('RERLAY❓');
     playScound(alertSound);
     stopScound(bgSound);
 }
@@ -67,7 +65,7 @@ function finishGame(win) {
     }
     stopGameTimer();
     stopScound(bgSound);
-    showPopUpWithText(win ? 'YOU WON' : 'YOU LOST');
+    gameFinishBanner.showWithText(win ? 'YOU WON' : 'YOU LOST');
 }
 
 function showStopButton() {
@@ -110,15 +108,6 @@ function updateTimerText(time) {
     const minutes = Math.floor(time / 60) //floor은 소수점을 내려주는 integer로 만들어주는 함수
     const secounds = time % 60;
     gameTimer.innerHTML = `${minutes}:${secounds}`
-}
-
-function showPopUpWithText(text) {
-    popUpText.innerText = text;
-    popUp.classList.remove('pop-up--hide');
-}
-
-function hidePopUp() {
-    popUp.classList.add('pop-up--hide');
 }
 
 function initGame() {
