@@ -23,7 +23,10 @@ gameFinishBanner.setClickListner(() => {
 })
 
 const gameField = new Field(CARROT_COUNT, BUG_COUNT);
-gameField.setClickListener(onItemClick);
+gameField.setClickListener(onItemClick); //item하나에 대한건가?
+// gameField.setClickListener(() => {
+//     onItemClick
+// });
 
 function onItemClick(item) {
     if (!started) {
@@ -39,7 +42,6 @@ function onItemClick(item) {
         finishGame(false);
     }
 }
-
 
 gameBtn.addEventListener('click', () => {
     //클릭이되는순간 started는 false로 들어와 그래서 바로 else로 가! -> tartGame()호출
@@ -80,6 +82,12 @@ function finishGame(win) {
     stopGameTimer();
     stopScound(bgSound);
     gameFinishBanner.showWithText(win ? 'YOU WON' : 'YOU LOST');
+}
+
+function initGame() {
+    score = 0;
+    gameScore.innerText = CARROT_COUNT;
+    gameField.init();
 }
 
 function showStopButton() {
@@ -123,13 +131,6 @@ function updateTimerText(time) {
     const secounds = time % 60;
     gameTimer.innerHTML = `${minutes}:${secounds}`
 }
-
-function initGame() {
-    score = 0;
-    gameScore.innerText = CARROT_COUNT;
-    gameField.init();
-}
-
 
 function updateScoreBoare() {
     gameScore.innerText = CARROT_COUNT - score;

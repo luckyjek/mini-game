@@ -19,7 +19,8 @@ export default class Field {
         // this.onClick는그럼, Field클래스안에서의 ? onClick 저거인가? 
         //그리고 이벤트를 저기 에다가 넘겨주는거?
         // this.onClick = this.onClick.bind(this);
-        this.field.addEventListener('click', event => this.onClick(event));
+        //this.field.addEventListener('click', event => this.onClick(event));
+        this.field.addEventListener('click', this.onClick);
     }
 
     init() {
@@ -28,7 +29,7 @@ export default class Field {
         this._addItem('bug', this.bugCount, 'img/bug.png');
     }
 
-    setClickListener(onItemClick) {
+    setClickListener(onItemClick) { //ref 전달
         this.onItemClick = onItemClick;
     }
 
@@ -55,13 +56,15 @@ export default class Field {
         }
     }
 
-    // onClick = event => {
-    onClick(event) {
+    onClick = event => {
+        //onClick(event) {
         const target = event.target;
         if (target.matches('.carrot')) {
             target.remove();
             sound.playCattor();
             playScound(carrotSound);
+
+            // onItemClick에 대해 받아온 정보(ref)가 있다면? 뒤에꺼를 실행하라.  
             this.onItemClick && this.onItemClick('carrot');
         } else if (target.matches('.bug')) {
             this.onItemClick && this.onItemClick('bug');
