@@ -1,6 +1,9 @@
 'use strict';
 import * as sound from './sound.js';
-import Field from './filed.js';
+import {
+    Field,
+    ItemType
+} from './filed.js';
 
 export const Reason = Object.freeze({
     win: 'win',
@@ -85,13 +88,13 @@ class Game {
         if (!this.started) { //game이 시작되지않았으면 return;
             return;
         }
-        if (item === 'carrot') {
+        if (item === ItemType.carrot) {
             this.score++;
             this.updateScoreBoare();
             if (this.score === this.carrotCount) {
                 this.stop(Reason.win);
             }
-        } else if (item === 'bug') {
+        } else if (item === ItemType.bug) {
             this.stop(Reason.lose);
         }
     }
