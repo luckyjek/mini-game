@@ -2,7 +2,39 @@
 import * as sound from './sound.js';
 import Field from './filed.js';
 
-export default class Game {
+export const Reason = Object.freeze({
+    win: 'win',
+    lose: 'lose',
+    cancel: 'cancel',
+})
+
+//Builder Pattern
+export class GameBuilder {
+    withGameDuration(duration) {
+        this.gameDuration = duration;
+        return this;
+    }
+
+    withCarrotCount(num) {
+        this.carrotCount = num;
+        return this;
+    }
+
+    withBugCount(num) {
+        this.bugCount = num;
+        return this;
+    }
+
+    build() {
+        return new Game(
+            this.gameDuration, //
+            this.carrotCount,
+            this.bugCount
+        )
+    }
+}
+
+class Game {
     constructor(gameDuration, carrotCount, bugCount) {
         this.gameDuration = gameDuration;
         this.carrotCount = carrotCount;
@@ -14,7 +46,7 @@ export default class Game {
         this.gameBtn.addEventListener('click', () => {
             //클릭이되는순간 started는 false로 들어와 그래서 바로 else로 가! -> tartGame()호출
             if (this.started) { //게임이 시작이됐으면, 중지해야되고 
-                this.stop()
+                this.stop(Reason.cancel);
             } else { //게임이 시작이되지않았다면, 게임을 시작하면된다.
                 this.start();
             }
@@ -41,27 +73,12 @@ export default class Game {
         sound.playBackground();
     }
 
-    stop() {
+    stop(reason) {
         this.started = false;
         this.stopGameTimer();
         this.hideGameButton();
-        sound.playAlert();
         sound.stopBackground();
-        this.onGameStop && this.onGameStop('cancel');
-    }
-
-    finish(win) {
-        //게임이 끝났다면 먼저 started = false로
-        this.started = false;
-        this.hideGameButton();
-        if (win) {
-            sound.playWin();
-        } else {
-            sound.playBug();
-        }
-        this.stopGameTimer();
-        sound.stopBackground();
-        this.onGameStop && this.onGameStop(win ? 'win' : 'lose');
+        this.onGameStop && this.onGameStop(reason);
     }
 
     onItemClick = (item) => {
@@ -72,10 +89,10 @@ export default class Game {
             this.score++;
             this.updateScoreBoare();
             if (this.score === this.carrotCount) {
-                this.finish(true);
+                this.stop(Reason.win);
             }
         } else if (item === 'bug') {
-            this.finish(false);
+            this.stop(Reason.lose);
         }
     }
 
@@ -103,7 +120,7 @@ export default class Game {
             //더이상 인터벌을 만들면안된다.
             if (remainingTimerSec <= 0) {
                 clearInterval(this.timer); //web AIP를 이용해서 clearInterval()호출
-                this.finish(this.carrotCount === this.score);
+                this.stop(this.carrotCount === this.score ? Reason.win : Reason.lose);
                 return;
             }
             //만약 0초가 아닌, 아직 게임이 진행이되고있다면 
